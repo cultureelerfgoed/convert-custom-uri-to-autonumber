@@ -21,7 +21,6 @@ output_file = "convert-skos-concept-to-autonumber/vrouwenthesaurus-autonumber.tr
 base_URI = "https://vrouwenthesaurus.nl/id/"
 
 # Global variables 
-
 old_g = Graph()
 new_g = Graph()
 URI_dict = {}

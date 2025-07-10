@@ -1,4 +1,4 @@
-# First draft of this repository
+# Convert SKOS:Concept to Autonumber
 
 ## Introduction
 
