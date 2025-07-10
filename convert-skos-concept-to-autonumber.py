@@ -1,15 +1,35 @@
 from rdflib import Graph, URIRef
 from rdflib.namespace import SKOS
 from rdflib.namespace import RDF
+from pathlib import Path
+
+# Configuration (Change these values according to your needs)
+
+# Defines the range of the autonumber
+autonumber_range = range(1000000, 9999999)
+
+# Defines the input file path
+input_file = "convert-skos-concept-to-autonumber/pp_project_vrouwenthesaurus.ttl"
+
+# Defines the format of the output file
+output_file_format = "trig"
+
+# Defines the path of the output file
+output_file = "convert-skos-concept-to-autonumber/vrouwenthesaurus-autonumber.trig"
+
+# Base URI for the skos:Concepts
+base_URI = "https://vrouwenthesaurus.nl/id/"
+
+# Global variables 
 
 old_g = Graph()
 new_g = Graph()
 URI_dict = {}
-id_iter = iter(range(1000000, 9999999))
-base_URI = "https://vrouwenthesaurus.nl/id/"
+id_iter = iter(autonumber_range)
 
 # Parse RDF file
-old_g.parse("Workspace/vrouwenthesaurus/pp_project_vrouwenthesaurus.ttl")
+print(f"Opening file: {str(Path.as_posix(Path.cwd())) +"/"+input_file}")
+old_g.parse(str(Path.as_posix(Path.cwd())) +"/"+input_file )
 
 # Copy namespace to new graph
 for ns_prefix, ns in old_g.namespaces():    
@@ -33,12 +53,9 @@ for subj, pred, obj in new_g:
         new_g.remove((subj, pred, obj))
         new_g.add((URI_dict.get(str(subj), subj), pred, URI_dict.get(str(obj), obj)))
 
-# Checks  
-print(f"Dict URI_dict has {len(URI_dict)} entries")
-print(f"Old graph has {len(old_g)} statements.")
-print(f"New graph has {len(new_g)} statements.")
-print(URI_dict.get("https://vrouwenthesaurus.nl/id/detectives", "No detectives"))
-print(URI_dict.get("https://vrouwenthesaurus.nl/id/Sierra_Leone", "No Sierra Leone"))
+# Tests
+assert(len(old_g) == len(new_g))
 
-# Print out the entire Graph in the RDF Turtle format
-new_g.serialize(format="trig", destination="new_g.trig")
+# Serialize new graph and write to output file
+print(f"Writing output to: {Path.as_posix(Path.cwd())+"/"+output_file}")
+new_g.serialize(format=output_file_format, destination=str(Path.as_posix(Path.cwd())+"/"+output_file))
