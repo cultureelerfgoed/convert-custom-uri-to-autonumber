@@ -9,7 +9,7 @@ from pathlib import Path
 autonumber_range = range(1000000, 9999999)
 
 # Defines the input file path
-input_file = "convert-skos-concept-to-autonumber/pp_project_vrouwenthesaurus.ttl"
+input_file = "convert-skos-concept-to-autonumber/pp_project_vrouwenthesaurus.trig"
 
 # Defines the format of the output file
 output_file_format = "trig"
@@ -31,7 +31,7 @@ print(f"Opening file: {str(Path.as_posix(Path.cwd())) +"/"+input_file}")
 old_g.parse(str(Path.as_posix(Path.cwd())) +"/"+input_file )
 
 # Copy namespace to new graph
-for ns_prefix, ns in old_g.namespaces():    
+for ns_prefix, ns in old_g.namespaces():
     new_g.bind(ns_prefix, ns)
 
 # Loop through each triple in the graph (subj, pred, obj)
@@ -52,9 +52,12 @@ for subj, pred, obj in new_g:
         new_g.remove((subj, pred, obj))
         new_g.add((URI_dict.get(str(subj), subj), pred, URI_dict.get(str(obj), obj)))
 
-# Tests
+# Test that the new graph contains as many triples as the old graph
 assert(len(old_g) == len(new_g))
 
 # Serialize new graph and write to output file
 print(f"Writing output to: {Path.as_posix(Path.cwd())+"/"+output_file}")
 new_g.serialize(format=output_file_format, destination=str(Path.as_posix(Path.cwd())+"/"+output_file))
+
+# Test that file wrote succesfully 
+assert(Path(output_file).exists())
