@@ -12,7 +12,7 @@ autonumber_range = range(1000000, 9999999)
 # Defines the input file path, currently only works with TTL..
 INPUT_FILE = "pp_project_vrouwenthesaurus.ttl"
 # Defines the format of the output file
-OUTPUT_FILE_FORMAT = "trig"
+OUTPUT_FORMAT = "trig"
 # Defines the path of the output file
 OUTPUT_FILE = "vrouwenthesaurus-autonumber.trig"
 # Base URI for the skos:Concepts
@@ -52,16 +52,15 @@ for subj, pred, obj in graph:
     if (None, DCTERMS.modified, obj) in graph or (None, DCTERMS.created, obj) in graph:
         dt_mod = pd.to_datetime(str_obj).strftime(new_df).replace("000", "")
         graph.remove((uri_dict.get(str_subj, subj), pred, uri_dict.get(str_obj, obj)))
-        graph.add((uri_dict.get(str_subj, subj), pred, Literal(dt_mod)))
-    
+        graph.add((uri_dict.get(str_subj, subj), pred, Literal(dt_mod, datatype=XSD.dateTimeStamp)))
+
 # Test that the new graph contains as many triples as the old graph
 print(f"Graph length (new vs. old): {len(graph)} == {old_g_length}.")
 assert len(graph) == old_g_length
 
-
 # Serialize new graph and write to output file
 print(f"Writing output to: {Path.as_posix(Path.cwd())+"/"+OUTPUT_FILE}")
-graph.serialize(format=OUTPUT_FILE_FORMAT, destination=str(Path.as_posix(Path.cwd())+"/"+OUTPUT_FILE))
+graph.serialize(format=OUTPUT_FORMAT, destination=str(Path.as_posix(Path.cwd())+"/"+OUTPUT_FILE))
 
 # Test that file wrote succesfully
 assert Path(OUTPUT_FILE).exists()
