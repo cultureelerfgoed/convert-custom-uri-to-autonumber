@@ -1,4 +1,4 @@
-# Convert SKOS:Concept to Autonumber
+# Convert Custom URI to Autonumber
 
 ## Introduction
 
