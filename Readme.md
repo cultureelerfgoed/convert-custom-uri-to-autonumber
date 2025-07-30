@@ -9,7 +9,7 @@ This Python script allows you to process linked data set that uses any kind of s
 1. python -m venv .venv
 2. pip install -r requirements.txt
 3. configure your range, input file, output file format, output file, and base URI in the script
-4. run with python convert-skos-concept-to-autonumber.py
+4. run with python convert-custom-uri-to-autonumber.py
 
 ## Configuration
 

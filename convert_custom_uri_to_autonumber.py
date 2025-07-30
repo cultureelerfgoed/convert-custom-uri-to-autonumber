@@ -17,8 +17,10 @@ OUTPUT_FORMAT = "trig"
 OUTPUT_FILE = "vrouwenthesaurus-autonumber.trig"
 # Base URI for the skos:Concepts
 BASE_URI = "https://vrouwenthesaurus.nl/id/"
+# Target term
+TARGET_TERM = SKOS.Concept
 # Dateformat for DCTERMS:created and DCTERMS:modified
-new_df = '%Y-%m-%dT%H:%M:%S.%fZ'
+NEW_DF = '%Y-%m-%dT%H:%M:%S.%fZ'
 ### End of Configuration
 
 # Global variables 
@@ -36,23 +38,24 @@ for subj, pred, obj in graph:
     str_subj = str(subj)
     str_obj = str(obj)
     # check whether subject contains BASE_URI, not already in key dictionary, and of RDF.type SKOS.concept
-    if(BASE_URI in subj and str_subj not in uri_dict.keys() and (subj, RDF.type, SKOS.Concept) in graph):
+    if(BASE_URI in subj and str_subj not in uri_dict.keys() and (subj, RDF.type, TARGET_TERM) in graph):
         # If so, add it to the key dictionary and increment ID iterator
         uri_dict.update({str(subj) : URIRef(BASE_URI + str(next(id_iter)))})
 
     # check whether object contains BASE_URI, not already in key dictionary, and of RDF.type SKOS.concept
-    if(BASE_URI in obj and str_obj not in uri_dict.keys() and (obj, RDF.type, SKOS.Concept) in graph):
+    if(BASE_URI in obj and str_obj not in uri_dict.keys() and (obj, RDF.type, TARGET_TERM) in graph):
         uri_dict.update({str_obj : URIRef(BASE_URI + str(next(id_iter)))})
 
     # Either add triple to graph as is, or as an updated triple.
     graph.remove((subj, pred, obj))
     graph.add((uri_dict.get(str_subj, subj), pred, uri_dict.get(str_obj, obj)))
 
-    # Normalize timestamps to UTC in dcterms:created and dcterms:modified
-    if (None, DCTERMS.modified, obj) in graph or (None, DCTERMS.created, obj) in graph:
-        dt_mod = pd.to_datetime(str_obj).strftime(new_df).replace("000", "")
-        graph.remove((uri_dict.get(str_subj, subj), pred, uri_dict.get(str_obj, obj)))
-        graph.add((uri_dict.get(str_subj, subj), pred, Literal(dt_mod, datatype=XSD.dateTimeStamp)))
+    # Normalize timestamps to UTC in dcterms:created and dcterms:modified if NEW_DF exists
+    if NEW_DF:
+        if (None, DCTERMS.modified, obj) in graph or (None, DCTERMS.created, obj) in graph:
+            dt_mod = pd.to_datetime(str_obj).strftime(NEW_DF).replace("000", "")
+            graph.remove((uri_dict.get(str_subj, subj), pred, uri_dict.get(str_obj, obj)))
+            graph.add((uri_dict.get(str_subj, subj), pred, Literal(dt_mod, datatype=XSD.dateTimeStamp)))
 
 # Test that the new graph contains as many triples as the old graph
 print(f"Graph length (new vs. old): {len(graph)} == {old_g_length}.")
