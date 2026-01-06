@@ -10,13 +10,13 @@ import pandas as pd
 # Defines the range of the autonumber
 autonumber_range = range(1000000, 9999999)
 # Defines the input file path, currently only works with TTL..
-INPUT_FILE = "pp_project_vrouwenthesaurus.ttl"
+INPUT_FILE = "thesaurusforgenocideandmassviolence.ttl"
 # Defines the format of the output file
 OUTPUT_FORMAT = "trig"
 # Defines the path of the output file
-OUTPUT_FILE = "vrouwenthesaurus-autonumber.trig"
+OUTPUT_FILE = "thesaurusforgenocideandmassviolence-autonumber.trig"
 # Base URI for the skos:Concepts
-BASE_URI = "https://vrouwenthesaurus.nl/id/"
+BASE_URI = "https://data.niod.nl/tgmv/id/"
 # Target term
 TARGET_TERM = SKOS.Concept
 # Dateformat for DCTERMS:created and DCTERMS:modified
